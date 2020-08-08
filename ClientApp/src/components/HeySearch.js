@@ -26,6 +26,7 @@ const Styles = styled.div`
         color: red;
     }
 `;
+
 class HeySearch extends React.Component {
 
     constructor(props) {

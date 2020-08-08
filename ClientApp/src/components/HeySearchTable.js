@@ -4,7 +4,6 @@ import moment from 'moment';
 import styled from 'styled-components'
 import DOMPurify from 'dompurify';
 
-
 const Styles = styled.div`
     padding: 1rem;
     .nowrap {
@@ -45,9 +44,10 @@ const Styles = styled.div`
 
 const columns = [
     {
-        Header: "Date & Time",
+        Header: "Date/Time",
         accessor: "created",
         Cell: ({value}) => {
+            // Using moment library, format date and time 
             const day = moment(value);
             return <span className="nowrap">{day.format('D-MMM-YY')}<br/>{day.format('HH:mm')}</span>;
         }
@@ -68,9 +68,9 @@ const columns = [
                 <div>
                     <span dangerouslySetInnerHTML={{__html: tweet}} />
                     <span>
-                        <a href={`https://twitter.com/${props.row.values.userName}/status/${props.row.values.id}`} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink href={`https://twitter.com/${props.row.values.userName}/status/${props.row.values.id}`}>
                             &nbsp;<img width="15" src="/external_link.png" alt="open" />
-                        </a>
+                        </ExternalLink>
                     </span>
                 </div>
             );
@@ -80,21 +80,23 @@ const columns = [
         Header: "User",
         accessor: "userName",
         Cell: ({value}) => {
-            return <a href={`https://twitter.com/${value}`}>{value}</a>
+            // make a link to the Twitter user's profile
+            return <ExternalLink href={`https://twitter.com/${value}`}>{value}</ExternalLink>
         }
     },
     {
         Header: "Images",
         accessor: "imageUrls",
         Cell: ({value}) => {
+            // embedded images if there are image URLs to this tweet.
             return (
                 <div>
                 {
                     value.map(url => {
                         return (
-                            <a href={url} target="_blank" rel="noopener noreferrer" key={url}>
+                            <ExternalLink href={url} key={url}>
                                 <img className="image_preview" src={url} alt={url} />
-                            </a>
+                            </ExternalLink>
                         );
                     })
                 }
@@ -106,10 +108,12 @@ const columns = [
         Header: "Referenced",
         accessor: "originalId",
         Cell: (props) => {
-            return (props.value ? <a href={`https://twitter.com/${props.row.values.originalUserId}/status/${props.value}`} target="_blank" rel="noopener noreferrer">Referenced Tweet</a> : null);
+            // if this tweet refers to other tweet (retweet, comment retweet or reply), 
+            // make an external link to it. 
+            return (props.value ? <ExternalLink href={`https://twitter.com/${props.row.values.originalUserId}/status/${props.value}`}>Referenced Tweet</ExternalLink> : null);
         }
     },
-/* below are hidden columns */
+/* below are hidden columns used in other columns */
     {
         Header: "ContentID",
         accessor: "id",
@@ -123,6 +127,19 @@ const columns = [
         accessor: "originalUserId",
     },
 ];
+
+/**
+ * Makes a safe link to open a new window by specifing rel="noopener noreferrer".
+ * Use the same props for anchor (a) element (e.g. href)
+ * @param {*} props 
+ */
+const ExternalLink = (props) => {
+    return (
+        <a {...props} target="_blank" rel="noopener noreferrer">
+        {props.children}
+        </a>
+    );
+};
 
 /**
  * A component to show the Search Result in a table format
