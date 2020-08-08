@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState }from 'react';
 import axios from 'axios';
-import { trackPromise, usePromiseTracker } from 'react-promise-tracker';
+import { trackPromise, usePromiseTracker, promiseTrackerHoc } from 'react-promise-tracker';
 import Loader from 'react-promise-loader';
 import styled from 'styled-components'
 
@@ -27,8 +27,59 @@ const Styles = styled.div`
     }
 `;
 
+/**
+ * A component to display load more data. 
+ * This component will use the promise tracker and window scroll 
+ * to change the displayed text and trigger search. 
+ * @param {Object} props - react props
+ * @param {string} props.nextToken - the next page token
+ * @param {function} props.loadFunc - the function to load more
+ */
+const LoadMore = (props) => {
+    const { nextToken, loadFunc } = props;
+    const { promiseInProgress } = usePromiseTracker(); //this will be true if it is loading data
+    const [ windowBottom, setWindowBottom ] = useState(Number.MAX_SAFE_INTEGER); //scroll position 
+    const [ clientHeight, setClientHeight ] = useState(0); //client window size
+
+    const handleScroll = (event) => {
+        setWindowBottom(document.documentElement.getBoundingClientRect().bottom);
+        setClientHeight(document.documentElement.clientHeight);
+    };
+
+    // set scroll listener to track the scrolling
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll, true);
+        return (()=>{window.removeEventListener('scroll', handleScroll)});
+    }, []);
+
+    // trigger load more when reaching the end 
+    useEffect(() => {
+        console.log(`LoadingInProgress:${promiseInProgress}, WindowBottomAt:${windowBottom}, ClientHeight:${clientHeight}`);
+        //trigger the load func only if it is NOT loading, there is next token and scrolled to the end
+        if(!promiseInProgress && nextToken && (windowBottom<clientHeight+50)) {
+            setWindowBottom(Number.MAX_SAFE_INTEGER); // pretend the scroll is at the top to prevent triggering multiple times.
+            loadFunc();
+        }
+    }, [windowBottom, promiseInProgress, clientHeight, nextToken, loadFunc])
+
+    if(promiseInProgress) {
+        return <div className="center"><span>loading...</span></div>
+    } else if(nextToken) {
+        return <div className="center"><button className="button_more" onClick={()=>loadFunc()}>Load More</button></div>;
+    } else {
+        return null;
+    }
+}
+
+/**
+ * React component for HeySearch
+ */
 class HeySearch extends React.Component {
 
+    /**
+     * @constructor
+     * @param {Object} props - react props
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -85,12 +136,6 @@ class HeySearch extends React.Component {
 
     render() {
 
-        // if there is next token, show "Load More" button for the next page
-        let loadMore = "";
-        if(this.state.nextToken) {
-            loadMore = <div className="center"><button className="button_more" onClick={()=>this.search(true)}>Load More</button></div>;
-        }
-
         // if there is a message to show, display it 
         let message = "";
         if(this.state.message) {
@@ -133,7 +178,7 @@ class HeySearch extends React.Component {
                 <HeySearchTable data={this.state.data} />
 
                 <Styles>                
-                {loadMore}
+                    <LoadMore nextToken={this.state.nextToken} loadFunc={() => {this.search(true)}} />
                 </Styles>
             </div>
         );

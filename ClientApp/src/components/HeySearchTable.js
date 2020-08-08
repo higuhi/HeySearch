@@ -42,6 +42,10 @@ const Styles = styled.div`
     }
 `;
 
+/**
+ * Column definition for the HeySearch Table.
+ * See react-table for the details. 
+ */
 const columns = [
     {
         Header: "Date/Time",
@@ -142,8 +146,9 @@ const ExternalLink = (props) => {
 };
 
 /**
- * A component to show the Search Result in a table format
- * @param {*} props
+ * A component to show the Search Result in a table format using react-table.
+ * @param {Object} props - react props
+ * @param {string} props.data - an array of data for the table
  */
 const HeySearchTable = ({ data }) => {
     const { 
