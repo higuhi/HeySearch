@@ -2,9 +2,30 @@ import React from 'react';
 import axios from 'axios';
 import { trackPromise, usePromiseTracker } from 'react-promise-tracker';
 import Loader from 'react-promise-loader';
+import styled from 'styled-components'
 
 import HeySearchTable from './HeySearchTable';
 
+const Styles = styled.div`
+    padding: 1rem;
+    .input_label_option {
+        margin-left: 1rem;
+    }
+    .button_more {
+        border: none;
+        background: none;
+        padding: 0;
+        text-decoration: underline;
+        cursor: pointer;
+        color: blue;
+    }
+    .center {
+        text-align:center; 
+    }
+    .message {
+        color: red;
+    }
+`;
 class HeySearch extends React.Component {
 
     constructor(props) {
@@ -12,7 +33,7 @@ class HeySearch extends React.Component {
         this.state = {
             searchTerm: "",
             isImageOnly: false,
-            isOriginalOnly: false,
+            includeRetweet: false,
             nextToken: "",
             data: [],
             message: ""
@@ -30,9 +51,9 @@ class HeySearch extends React.Component {
 
         //Construct the URL for the target end node and query 
         const url = this.props.url 
-            + "?q=" + this.state.searchTerm 
+            + "?q=" + encodeURIComponent(this.state.searchTerm) 
             + (this.state.isImageOnly ? "&io=1" : "") 
-            + (this.state.isOriginalOnly ? "&oo=1" : "")
+            + (this.state.includeRetweet ? "" : "&oo=1")
             + (useNext===true && this.state.nextToken!=="" ? "&nt="+this.state.nextToken : "");
 
         console.log(`EndPoint URL: ${url}`);
@@ -66,48 +87,53 @@ class HeySearch extends React.Component {
         // if there is next token, show "Load More" button for the next page
         let loadMore = "";
         if(this.state.nextToken) {
-            loadMore = <button onClick={()=>this.search(true)}>Load More</button>;
+            loadMore = <div className="center"><button className="button_more" onClick={()=>this.search(true)}>Load More</button></div>;
         }
 
         // if there is a message to show, display it 
         let message = "";
         if(this.state.message) {
-            message = <div><span>{this.state.message}</span></div>;
+            message = <div><span className="message">{this.state.message}</span></div>;
         }
 
         return(
             <div>
-                <div>
-                    <label htmlFor="io">Search words: </label>
-                    <input type="text" placeholder="Enter search words" name="search"
-                            value={this.state.searchTerm} 
-                            onChange={(e)=>this.setState({searchTerm: e.target.value})} />
-                    
-                    <br />
-                    
-                    <input type="checkbox" id="io" name="io" value="1" 
-                            defaultChecked={this.state.isImageOnly} 
-                            onChange={()=>this.setState({isImageOnly: !this.state.isImageOnly})} />
-                    <label htmlFor="io">Search tweets with image only</label>
-                    
-                    <input type="checkbox" id="oo" name="oo" value="1" 
-                            defaultChecked={this.state.isOriginalOnly} 
-                            onChange={()=>this.setState({isOriginalOnly: !this.state.isOriginalOnly})} />
-                    <label htmlFor="oo">Search original (no retweets)</label>
-                    
-                    <br />
-
-                    <button disabled={(this.state.searchTerm==="")}
-                            onClick={()=>this.search()} >Search</button>
-                </div>
-
-                {message}
-                
                 <Loader promiseTracker={usePromiseTracker} />
+                
+                <Styles>
+                    <div>
+                        <label className="input_label_search" htmlFor="io">Search words:&nbsp;</label>
+                        <input type="text" placeholder="Enter search words" name="search"
+                                value={this.state.searchTerm} 
+                                onChange={(e)=>this.setState({searchTerm: e.target.value})} />
+                        
+                        <br />
+                        
+                        <input className="input_label_option" type="checkbox" id="io" name="io" value="1" 
+                                defaultChecked={this.state.isImageOnly} 
+                                onChange={()=>this.setState({isImageOnly: !this.state.isImageOnly})} />
+                        <label htmlFor="io">Search tweets with image only</label>
+                        
+                        <input className="input_label_option" type="checkbox" id="oo" name="oo" value="1" 
+                                defaultChecked={this.state.includeRetweet} 
+                                onChange={()=>this.setState({includeRetweet: !this.state.includeRetweet})} />
+                        <label htmlFor="oo">Include retweets</label>
+                        
+                        <br />
+
+                        <button disabled={(this.state.searchTerm==="")}
+                                onClick={()=>this.search()} >Search</button>
+        
+                        {message}
+
+                    </div>
+                </Styles>
 
                 <HeySearchTable data={this.state.data} />
-                
+
+                <Styles>                
                 {loadMore}
+                </Styles>
             </div>
         );
     }
