@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace HeySearch.Services.Twitter
@@ -18,6 +19,7 @@ namespace HeySearch.Services.Twitter
             public string id { get; set; }
             public string author_id { get; set; }
             public string text { get; set; }
+            public DateTime created_at { get; set; }
             public Attachments attachments { get; set; }
 
             public IList<Reference> referenced_tweets { get; set; }

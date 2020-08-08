@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace HeySearch.Models
@@ -24,6 +25,8 @@ namespace HeySearch.Models
             public string Id { get; set; }
 
             public string Content { get; set; }
+
+            public DateTime Created { get; set; }
 
             public string UserId { get; set; }
 

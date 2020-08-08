@@ -59,7 +59,7 @@ namespace HeySearch.Services.Twitter
 
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["query"] = searchTerm;
-            query["tweet.fields"] = "id,text,author_id,attachments,referenced_tweets";
+            query["tweet.fields"] = "id,text,author_id,attachments,referenced_tweets,created_at";
             query["expansions"]   = "attachments.media_keys,author_id";
             query["media.fields"] = "media_key,preview_image_url,type,url";
             query["user.fields"]  = "id,name";
@@ -171,6 +171,7 @@ namespace HeySearch.Services.Twitter
                 SearchResult.SearchResultItem item = new SearchResult.SearchResultItem();
                 item.Id = tweetData.id;
                 item.Content = tweetData.text;
+                item.Created = tweetData.created_at;
                 item.UserId = tweetData.author_id;
 
                 //look up the username from the dictionary
