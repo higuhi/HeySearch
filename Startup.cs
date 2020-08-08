@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using HeySearch.Services;
+using HeySearch.Services.Twitter;
+
 namespace HeySearch
 {
     public class Startup
@@ -28,6 +31,12 @@ namespace HeySearch
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            // Add HttpClient for ISocialNetworkSearchService
+            services.AddHttpClient();
+
+            // Add FacebookSearch as ISocialNetworkSearchService
+            services.AddTransient<ISocialNetworkSearchService, TwitterSearch>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
