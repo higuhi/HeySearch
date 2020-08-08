@@ -21,7 +21,6 @@ namespace HeySearch.Services.Twitter
             public string text { get; set; }
             public DateTime created_at { get; set; }
             public Attachments attachments { get; set; }
-
             public IList<Reference> referenced_tweets { get; set; }
         }
 
@@ -40,6 +39,7 @@ namespace HeySearch.Services.Twitter
         {
             public IList<User> users { get; set; }
             public IList<Media> media { get; set; }
+            public IList<Tweet> tweets { get; set; }
         }
 
         public class User

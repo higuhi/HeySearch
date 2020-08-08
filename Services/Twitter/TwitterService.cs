@@ -60,7 +60,7 @@ namespace HeySearch.Services.Twitter
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["query"] = searchTerm;
             query["tweet.fields"] = "id,text,author_id,attachments,referenced_tweets,created_at";
-            query["expansions"]   = "attachments.media_keys,author_id";
+            query["expansions"]   = "attachments.media_keys,author_id,referenced_tweets.id.author_id";
             query["media.fields"] = "media_key,preview_image_url,type,url";
             query["user.fields"]  = "id,name";
             
@@ -130,11 +130,12 @@ namespace HeySearch.Services.Twitter
             if(tweets==null) return null;
             if(tweets.data==null) return null;
 
-            // Since detailed information on users and media attachments are 
-            // seperated from the tweet data, we will use dictironary to lookup 
-            // user and media attachment details. 
+            // Since detailed information on users, media attachments and 
+            // referenced tweets are seperated from the tweet data, 
+            // we will use dictironary to lookup the details.  
             var users = new Dictionary<string, TwitterResponse.User>();
             var media = new Dictionary<string, TwitterResponse.Media>();
+            var references = new Dictionary<string, TwitterResponse.Tweet>();
 
             if(tweets.includes!=null) 
             {
@@ -158,6 +159,17 @@ namespace HeySearch.Services.Twitter
                         if(!media.TryAdd(m.media_key, m)) 
                         {
                             Console.WriteLine($"WARN: {m.media_key} was added multiple times.");
+                        }
+                    }
+                }
+
+                if(tweets.includes.tweets!=null) 
+                {
+                    foreach(var t in tweets.includes.tweets)
+                    {
+                        if(!references.TryAdd(t.id, t))
+                        {
+                            Console.WriteLine($"WARN: {t.id} was added multiple times.");
                         }
                     }
                 }
@@ -218,15 +230,25 @@ namespace HeySearch.Services.Twitter
                     item.Shared = true; // this item is shared 
                     
                     ulong min = ulong.MaxValue; // Twitter ID is unsigned 62 bits. 
-                    foreach(var reference in tweetData.referenced_tweets) 
+                    foreach(var r in tweetData.referenced_tweets) 
                     {
-                        ulong id = ulong.Parse(reference.id);
+                        ulong id = ulong.Parse(r.id);
                         if(id<min) 
                         {
                             min = id;
-                            item.OriginalId =  reference.id;
+                            item.OriginalId =  r.id;
                         }   
-                    }                    
+                    }
+
+                    //lookup the author of the original tweet
+                    try {
+                        item.OriginalUserId = references[item.OriginalId].author_id;
+                    } 
+                    catch
+                    {
+                        Console.WriteLine($"WARN: {item.OriginalId} does not exist in the tweet extension.");
+                        item.OriginalUserId = "";
+                    }
                 }
 
                 result.Items.Add(item);

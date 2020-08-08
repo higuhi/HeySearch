@@ -37,6 +37,8 @@ namespace HeySearch.Models
             public bool Shared { get; set; }
 
             public string OriginalId { get; set; }
+            
+            public string OriginalUserId { get; set; }
         }
     }
 }
