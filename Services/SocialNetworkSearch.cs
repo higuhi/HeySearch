@@ -11,16 +11,33 @@ namespace HeySearch.Services
     /// </summary>
     public interface ISocialNetworkSearchService
     {
+
+        /// <summary>
+        /// A set of options available for ISocialNetworkSearchService.
+        /// Implementation of ISocialNetworkSearchService must support those options.
+        /// </summary>
+        public enum OPTIONS
+        {
+            IMAGE_ONLY,
+            ORIGINAL_ONLY,
+            NEXT_PAGE_TOKEN,
+        }
+
         /// <summary>
         /// Searches contents from a social network using the given search term.
+        /// The searchTerm will be sanitized within this functin.
         /// This interface will run asynchronously.
         /// </summary>
-        /// <param name="q">
+        /// <param name="searchTerm">
         /// search term used to search contents in social network.
         /// </param>
+        /// <param name="options">
+        /// a key-value paired options for the search. 
+        /// See <see cref="ISocialNetworkSearchService.OPTIONS" >OPTIONS</see> for availabel options.
+        /// </param>
         /// <returns>
-        /// a list of SearchResult
+        /// SearchResult which contains the search results 
         /// </returns>
-        Task<List<SearchResult>> Search(string q);
+        Task<SearchResult> Search(string searchTerm, Dictionary<OPTIONS, string> options = null);
     }
 }

@@ -23,11 +23,40 @@ namespace HeySearch.Controllers
             _searchService = service;
         }
 
+#nullable enable
         [HttpGet]
-        public async Task<IEnumerable<SearchResult>> Get()
+        public async Task<ActionResult<SearchResult>> Get(string q, string? io, string? oo, string? nt)
         {
-            return await _searchService.Search("Aarhus");
-        }
+            if(string.IsNullOrWhiteSpace(q))
+            {
+                return BadRequest(); 
+            }
 
+            var options = new Dictionary<ISocialNetworkSearchService.OPTIONS, string>();
+            if(!string.IsNullOrEmpty(io))
+            {
+                options.Add(ISocialNetworkSearchService.OPTIONS.IMAGE_ONLY,"");
+            }
+            if(!string.IsNullOrEmpty(oo))
+            {
+                options.Add(ISocialNetworkSearchService.OPTIONS.ORIGINAL_ONLY,"");    
+            }
+            if(!string.IsNullOrEmpty(nt))
+            {
+                options.Add(ISocialNetworkSearchService.OPTIONS.NEXT_PAGE_TOKEN, nt);
+            }
+
+            SearchResult result = await _searchService.Search(q, options);
+
+            if(result==null) 
+            {
+                return NotFound();
+            }
+            else 
+            {
+                return result;
+            }
+        }
+#nullable disable
     }
 }
