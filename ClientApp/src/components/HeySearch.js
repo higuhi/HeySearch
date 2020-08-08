@@ -1,4 +1,8 @@
 import React from 'react';
+import axios from 'axios';
+import { trackPromise, usePromiseTracker } from 'react-promise-tracker';
+import Loader from 'react-promise-loader';
+
 import HeySearchTable from './HeySearchTable';
 
 class HeySearch extends React.Component {
@@ -20,10 +24,11 @@ class HeySearch extends React.Component {
      * Make a search request and load the response data. 
      * @param {bool} useNext true to use next page token 
      */
-    search(useNext=false) {
+    async search(useNext=false) {
 
-        //Construct the target end node query URL
-        const xhr = new XMLHttpRequest();
+        this.setState({message: ""}); // clear the message.
+
+        //Construct the URL for the target end node and query 
         const url = this.props.url 
             + "?q=" + this.state.searchTerm 
             + (this.state.isImageOnly ? "&io=1" : "") 
@@ -33,29 +38,27 @@ class HeySearch extends React.Component {
         console.log(`EndPoint URL: ${url}`);
 
         //Request the search result 
-        xhr.open('get', url, true);
-        xhr.onload = () => {
-            if(xhr.status==200) {
-                const response = JSON.parse(xhr.responseText);
-                if(useNext===true) {
-                    //response for next page - append the new data to the existing data. 
-                    this.setState({ data: [...this.state.data, ...response.items ] })
+        try {
+            const {data} = await trackPromise(axios.get(url));
+
+            // append data if this is next page, otherwise replace the data
+            const newItems = (useNext ? [...this.state.data, ...data.items ] : data.items);
+            
+            this.setState({ data: newItems, nextToken: data.nextPageToken});;
+        } catch (error) {            
+            let message = "";
+            if (error.response) {
+                if(error.response.status===404) {
+                    message = (useNext ? "There are no more results" : "No results found");
                 } else {
-                    //new response - replace the data
-                    this.setState({ data: response.items });
-                }
-                this.setState({ nextToken: response.nextPageToken });
-            } else if(xhr.status==404) {
-                if(useNext===true) {
-                    // there is no more page clear nextPageToken
-                    this.setState({ nextToken: "" });
-                } else {
-                    this.setState({ data: [] , message: "No result found"})
+                    message = `Unexpected server response ${error.response.status}`;
                 }
             } else {
+                message = `Something went wrong: ${error.message}`;
             }
-        };
-        xhr.send();
+
+            this.setState({ data: [], message: message, nextToken: ""});
+        }
     }
 
     render() {
@@ -99,6 +102,8 @@ class HeySearch extends React.Component {
                 </div>
 
                 {message}
+                
+                <Loader promiseTracker={usePromiseTracker} />
 
                 <HeySearchTable data={this.state.data} />
                 
