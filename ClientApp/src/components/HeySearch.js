@@ -125,9 +125,10 @@ class HeySearch extends React.Component {
             // append data if this is next page, otherwise replace the data
             let newItems; 
             if(useNext) {
-                // Twitter sometimes reply the same result set, check the last ID to avoid duplicate
+                // the "load more" on scroll may trigger multiple time in some cases, 
+                // so check the last IDs of the data to avoid duplicates. 
                 if(this.state.data[this.state.data.length-1].id === data.items[data.items.length-1].id) {
-                    console.log("Warn: Twitter responded the same set of results... Ignore them");
+                    console.log("Ignoring duplicated responses.");
                     newItems = [...this.state.data]; 
                 } else {
                     newItems = [...this.state.data, ...data.items];
