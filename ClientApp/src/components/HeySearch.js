@@ -172,7 +172,7 @@ class HeySearch extends React.Component {
                             <label className="input_label_search" htmlFor="io">Search words:&nbsp;</label>
                             <input className="input_search" type="text" placeholder="Enter search words" name="search"
                                     value={this.state.searchTerm} 
-                                    onChange={(e)=>this.setState({searchTerm: e.target.value})} />
+                                    onChange={(e)=>this.setState({searchTerm: e.target.value, nextToken: ""})} />
                             
                             <br />
                             
