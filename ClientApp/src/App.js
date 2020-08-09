@@ -12,8 +12,8 @@ export default class App extends Component {
   render () {
     return (
       <Layout>
-        <Route exact path='/' render={(props) => <HeySearch {...props} url={'https://localhost:5001/api'} />} />
-        <Route path='/heysearch' render={(props) => <HeySearch {...props} url={'https://localhost:5001/api'} />} />
+        <Route exact path='/' render={(props) => <HeySearch {...props} url={'/api'} />} />
+        <Route path='/heysearch' render={(props) => <HeySearch {...props} url={'/api'} />} />
       </Layout>
     );
   }

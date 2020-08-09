@@ -1,6 +1,6 @@
 import React, { useEffect, useState }from 'react';
 import axios from 'axios';
-import { trackPromise, usePromiseTracker, promiseTrackerHoc } from 'react-promise-tracker';
+import { trackPromise, usePromiseTracker } from 'react-promise-tracker';
 import Loader from 'react-promise-loader';
 import styled from 'styled-components';
 import MediaQuery from 'react-responsive';
@@ -12,6 +12,10 @@ const Styles = styled.div`
     padding: 1rem;
     .input_label_option {
         margin-left: 1rem;
+    }
+    .input_search{
+        margin-bottom: 0.5rem;
+        font-size: 16px;
     }
     .button_more {
         border: none;
@@ -151,7 +155,7 @@ class HeySearch extends React.Component {
                 <Styles>
                     <div>
                         <label className="input_label_search" htmlFor="io">Search words:&nbsp;</label>
-                        <input type="text" placeholder="Enter search words" name="search"
+                        <input className="input_search" type="text" placeholder="Enter search words" name="search"
                                 value={this.state.searchTerm} 
                                 onChange={(e)=>this.setState({searchTerm: e.target.value})} />
                         
@@ -162,6 +166,8 @@ class HeySearch extends React.Component {
                                 onChange={()=>this.setState({isImageOnly: !this.state.isImageOnly})} />
                         <label htmlFor="io">Search tweets with image only</label>
                         
+                        <br />
+
                         <input className="input_label_option" type="checkbox" id="oo" name="oo" value="1" 
                                 defaultChecked={this.state.includeRetweet} 
                                 onChange={()=>this.setState({includeRetweet: !this.state.includeRetweet})} />

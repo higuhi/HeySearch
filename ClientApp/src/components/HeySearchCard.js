@@ -3,7 +3,6 @@ import moment from 'moment';
 import styled from 'styled-components'
 import DOMPurify from 'dompurify';
 
-import HeySearch from './HeySearch';
 import ExternalLink from './ExternalLink';
 
 const Styles = styled.div`
@@ -67,7 +66,7 @@ const HeySearchCard = (props) => {
         );
 
         return (
-            <div className="card_container">
+            <div key={item.id} className="card_container">
                 <div className="card_header">
                     <div>{day.format('D-MMM-YY')} {day.format('HH:mm')}</div>
                     <div>posted by <ExternalLink href={`https://twitter.com/${item.userName}`}>{item.userName}</ExternalLink></div>
