@@ -39,10 +39,11 @@ const Styles = styled.div`
  * to change the displayed text and trigger search. 
  * @param {Object} props - react props
  * @param {string} props.nextToken - the next page token
+ * @param {Object} props.nextToken - the search result data from the web api
  * @param {function} props.loadFunc - the function to load more
  */
 const LoadMore = (props) => {
-    const { nextToken, loadFunc } = props;
+    const { nextToken, loadFunc, data } = props;
     const { promiseInProgress } = usePromiseTracker(); //this will be true if it is loading data
     const [ windowBottom, setWindowBottom ] = useState(Number.MAX_SAFE_INTEGER); //scroll position 
     const [ clientHeight, setClientHeight ] = useState(0); //client window size
@@ -60,7 +61,6 @@ const LoadMore = (props) => {
 
     // trigger load more when reaching the end 
     useEffect(() => {
-        console.log(`LoadingInProgress:${promiseInProgress}, WindowBottomAt:${windowBottom}, ClientHeight:${clientHeight}`);
         //trigger the load func only if it is NOT loading, there is next token and scrolled to the end
         if(!promiseInProgress && nextToken && (windowBottom<clientHeight+50)) {
             setWindowBottom(Number.MAX_SAFE_INTEGER); // pretend the scroll is at the top to prevent triggering multiple times.
@@ -72,8 +72,10 @@ const LoadMore = (props) => {
         return <div className="center"><span>loading...</span></div>
     } else if(nextToken) {
         return <div className="center"><button className="button_more" onClick={()=>loadFunc()}>Load More</button></div>;
+    } else if(data.length!==0) {
+        return <div className="center"><span>No more results</span></div>;
     } else {
-        return null;
+        return "";
     }
 }
 
@@ -109,7 +111,7 @@ class HeySearch extends React.Component {
 
         //Construct the URL for the target end node and query 
         const url = this.props.url 
-            + "?q=" + encodeURIComponent(this.state.searchTerm) 
+            + "?q=" + encodeURIComponent(this.state.searchTerm.trim()) 
             + (this.state.isImageOnly ? "&io=1" : "") 
             + (this.state.includeRetweet ? "" : "&oo=1")
             + (useNext===true && this.state.nextToken!=="" ? "&nt="+this.state.nextToken : "");
@@ -121,7 +123,18 @@ class HeySearch extends React.Component {
             const {data} = await trackPromise(axios.get(url));
 
             // append data if this is next page, otherwise replace the data
-            const newItems = (useNext ? [...this.state.data, ...data.items ] : data.items);
+            let newItems; 
+            if(useNext) {
+                // Twitter sometimes reply the same result set, check the last ID to avoid duplicate
+                if(this.state.data[this.state.data.length-1].id === data.items[data.items.length-1].id) {
+                    console.log("Warn: Twitter responded the same set of results... Ignore them");
+                    newItems = [...this.state.data]; 
+                } else {
+                    newItems = [...this.state.data, ...data.items];
+                }
+            } else {
+                newItems = data.items;
+            }
             
             this.setState({ data: newItems, nextToken: data.nextPageToken});;
         } catch (error) {            
@@ -176,7 +189,7 @@ class HeySearch extends React.Component {
                             
                             <br />
 
-                            <input type="submit" value="Search" disabled={(this.state.searchTerm==="")} />
+                            <input type="submit" value="Search" disabled={(this.state.searchTerm.trim()==="")} />
             
                             {message}
                         </form>
@@ -192,7 +205,7 @@ class HeySearch extends React.Component {
 
 
                 <Styles>                
-                    <LoadMore nextToken={this.state.nextToken} loadFunc={() => {this.search(true)}} />
+                    <LoadMore nextToken={this.state.nextToken} data={this.state.data} loadFunc={() => {this.search(true)}} />
                 </Styles>
             </div>
         );
