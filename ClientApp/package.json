@@ -27,6 +27,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.18.3",
     "moment": "^2.27.0",
+    "react-app-polyfill": "^1.0.6",
     "react-promise-loader": "^1.0.5",
     "react-promise-tracker": "^2.1.0",
     "react-responsive": "^8.1.0",
@@ -53,7 +54,8 @@
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
-      "last 1 safari version"
+      "last 1 safari version",
+      "ie 11"
     ]
   }
 }
