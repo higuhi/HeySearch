@@ -68,7 +68,7 @@ const HeySearchCard = (props) => {
         return (
             <div key={item.id} className="card_container">
                 <div className="card_header">
-                    <div>{day.format('D-MMM-YY')} {day.format('HH:mm')}</div>
+                    <div>{day.format('D-MMM-YY')} {day.format('HH:mm:ss')}</div>
                     <div>posted by <ExternalLink href={`https://twitter.com/${item.userName}`}>{item.userName}</ExternalLink></div>
                 </div>
                 <div className="card_content">

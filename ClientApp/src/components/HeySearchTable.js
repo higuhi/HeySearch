@@ -56,7 +56,7 @@ const columns = [
         Cell: ({value}) => {
             // Using moment library, format date and time 
             const day = moment(value);
-            return <span className="nowrap">{day.format('D-MMM-YY')}<br/>{day.format('HH:mm')}</span>;
+            return <span className="nowrap">{day.format('D-MMM-YY')}<br/>{day.format('HH:mm:ss')}</span>;
         }
     },
     {
