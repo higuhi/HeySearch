@@ -4,6 +4,8 @@ import moment from 'moment';
 import styled from 'styled-components'
 import DOMPurify from 'dompurify';
 
+import ExternalLink from './ExternalLink';
+
 const Styles = styled.div`
     padding: 1rem;
     .nowrap {
@@ -11,6 +13,7 @@ const Styles = styled.div`
     }
     .image_preview {
         width:100px;
+        margin: 0.2em 0;
     }
     table {
         border-spacing: 0;
@@ -72,8 +75,9 @@ const columns = [
                 <div>
                     <span dangerouslySetInnerHTML={{__html: tweet}} />
                     <span>
+                        &nbsp;
                         <ExternalLink href={`https://twitter.com/${props.row.values.userName}/status/${props.row.values.id}`}>
-                            &nbsp;<img width="15" src="/external_link.png" alt="open" />
+                            <img width="15" src="/external_link.png" alt="open" />
                         </ExternalLink>
                     </span>
                 </div>
@@ -131,19 +135,6 @@ const columns = [
         accessor: "originalUserId",
     },
 ];
-
-/**
- * Makes a safe link to open a new window by specifing rel="noopener noreferrer".
- * Use the same props for anchor (a) element (e.g. href)
- * @param {*} props 
- */
-const ExternalLink = (props) => {
-    return (
-        <a {...props} target="_blank" rel="noopener noreferrer">
-        {props.children}
-        </a>
-    );
-};
 
 /**
  * A component to show the Search Result in a table format using react-table.

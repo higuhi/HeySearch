@@ -2,9 +2,11 @@ import React, { useEffect, useState }from 'react';
 import axios from 'axios';
 import { trackPromise, usePromiseTracker, promiseTrackerHoc } from 'react-promise-tracker';
 import Loader from 'react-promise-loader';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import MediaQuery from 'react-responsive';
 
 import HeySearchTable from './HeySearchTable';
+import HeySearchCard from './HeySearchCard';
 
 const Styles = styled.div`
     padding: 1rem;
@@ -175,7 +177,13 @@ class HeySearch extends React.Component {
                     </div>
                 </Styles>
 
-                <HeySearchTable data={this.state.data} />
+                <MediaQuery query="(max-width: 767px)">
+                    <HeySearchCard data={this.state.data} />
+                </MediaQuery>
+                <MediaQuery query="(min-width: 767px)">
+                    <HeySearchTable data={this.state.data} />
+                </MediaQuery>
+
 
                 <Styles>                
                     <LoadMore nextToken={this.state.nextToken} loadFunc={() => {this.search(true)}} />
