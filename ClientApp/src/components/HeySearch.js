@@ -164,14 +164,14 @@ class HeySearch extends React.Component {
                         <input className="input_label_option" type="checkbox" id="io" name="io" value="1" 
                                 defaultChecked={this.state.isImageOnly} 
                                 onChange={()=>this.setState({isImageOnly: !this.state.isImageOnly})} />
-                        <label htmlFor="io">Search tweets with image only</label>
+                        <label htmlFor="io">&nbsp;Search tweets with image only</label>
                         
                         <br />
 
                         <input className="input_label_option" type="checkbox" id="oo" name="oo" value="1" 
                                 defaultChecked={this.state.includeRetweet} 
                                 onChange={()=>this.setState({includeRetweet: !this.state.includeRetweet})} />
-                        <label htmlFor="oo">Include retweets</label>
+                        <label htmlFor="oo">&nbsp;Include retweets</label>
                         
                         <br />
 
