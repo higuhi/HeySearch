@@ -154,32 +154,32 @@ class HeySearch extends React.Component {
                 
                 <Styles>
                     <div>
-                        <label className="input_label_search" htmlFor="io">Search words:&nbsp;</label>
-                        <input className="input_search" type="text" placeholder="Enter search words" name="search"
-                                value={this.state.searchTerm} 
-                                onChange={(e)=>this.setState({searchTerm: e.target.value})} />
-                        
-                        <br />
-                        
-                        <input className="input_label_option" type="checkbox" id="io" name="io" value="1" 
-                                defaultChecked={this.state.isImageOnly} 
-                                onChange={()=>this.setState({isImageOnly: !this.state.isImageOnly})} />
-                        <label htmlFor="io">&nbsp;Search tweets with image only</label>
-                        
-                        <br />
+                        <form onSubmit={(event)=>{event.preventDefault(); this.search();}} > 
+                            <label className="input_label_search" htmlFor="io">Search words:&nbsp;</label>
+                            <input className="input_search" type="text" placeholder="Enter search words" name="search"
+                                    value={this.state.searchTerm} 
+                                    onChange={(e)=>this.setState({searchTerm: e.target.value})} />
+                            
+                            <br />
+                            
+                            <input className="input_label_option" type="checkbox" id="io" name="io" value="1" 
+                                    defaultChecked={this.state.isImageOnly} 
+                                    onChange={()=>this.setState({isImageOnly: !this.state.isImageOnly})} />
+                            <label htmlFor="io">&nbsp;Search tweets with image only</label>
+                            
+                            <br />
 
-                        <input className="input_label_option" type="checkbox" id="oo" name="oo" value="1" 
-                                defaultChecked={this.state.includeRetweet} 
-                                onChange={()=>this.setState({includeRetweet: !this.state.includeRetweet})} />
-                        <label htmlFor="oo">&nbsp;Include retweets</label>
-                        
-                        <br />
+                            <input className="input_label_option" type="checkbox" id="oo" name="oo" value="1" 
+                                    defaultChecked={this.state.includeRetweet} 
+                                    onChange={()=>this.setState({includeRetweet: !this.state.includeRetweet})} />
+                            <label htmlFor="oo">&nbsp;Include retweets</label>
+                            
+                            <br />
 
-                        <button disabled={(this.state.searchTerm==="")}
-                                onClick={()=>this.search()} >Search</button>
-        
-                        {message}
-
+                            <input type="submit" value="Search" disabled={(this.state.searchTerm==="")} />
+            
+                            {message}
+                        </form>
                     </div>
                 </Styles>
 

@@ -8,25 +8,28 @@ import ExternalLink from './ExternalLink';
 const Styles = styled.div`
     padding: 1rem;
     .cards_container {
-        display: flex;
-        flex-flow: column;
         width: 100%;
         text-align: center;
-    }
-    .card_container {
+        
         display: flex;
         flex-flow: column;
+    }
+    .card_container {
+        width: 100%;
         margin: 1rem auto;
         border: 1px solid gray;
         border-radius:5px; 
-        width: 100%;
+
+        display: flex;
+        flex-flow: column;
     }
     .card_header {
+        margin: 0.5rem;
+        border-bottom: 1px dotted gray;
+
         display: flex;
         flex-flow: row nowrap;
         justify-content: space-between;
-        margin: 0.5rem;
-        border-bottom: 1px dotted gray;
     }
     .card_content {
         text-align: left;
@@ -37,16 +40,14 @@ const Styles = styled.div`
         flex-flow: row wrap;
         align-content: flex-start;
         justify-content: space-around;
-
     }
     .card_reference {
         text-align: right;
         margin: 0.5rem;
     }
     .image_preview {
-        margin: 0.5rem;
         width: 200px;
-        
+        margin: 0.5rem;
     }
 `;
 
@@ -56,7 +57,6 @@ const HeySearchCard = (props) => {
     const cards = data.map((item) => {
         const day = moment(item.created);
         
-
         // making sure that the tweet content is sanitize
         // because dangerouslySetInnerHTML is used to embedded a link in the text
         let tweet = DOMPurify.sanitize(item.content);
