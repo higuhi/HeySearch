@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Text.Json;
@@ -136,42 +137,19 @@ namespace HeySearch.Services.Twitter
             var users = new Dictionary<string, TwitterResponse.User>();
             var media = new Dictionary<string, TwitterResponse.Media>();
             var references = new Dictionary<string, TwitterResponse.Tweet>();
-
             if(tweets.includes!=null) 
             {
-                // make a lookup table for the user
                 if(tweets.includes.users!=null) 
                 {
-                    foreach(var u in tweets.includes.users) 
-                    {
-                        if(!users.TryAdd(u.id, u)) 
-                        {
-                            Console.WriteLine($"WARN: {u.id} was added multiple times.");
-                        }
-                    }
+                    users = tweets.includes.users.ToDictionary(i => i.id, i=>i);
                 }
-
-                // make a lookup table for media attachment 
-                if(tweets.includes.media!=null)
+                if(tweets.includes.media!=null) 
                 {
-                    foreach(var m in tweets.includes.media) 
-                    {
-                        if(!media.TryAdd(m.media_key, m)) 
-                        {
-                            Console.WriteLine($"WARN: {m.media_key} was added multiple times.");
-                        }
-                    }
+                    media = tweets.includes.media.ToDictionary(i => i.media_key, i=>i);
                 }
-
                 if(tweets.includes.tweets!=null) 
                 {
-                    foreach(var t in tweets.includes.tweets)
-                    {
-                        if(!references.TryAdd(t.id, t))
-                        {
-                            Console.WriteLine($"WARN: {t.id} was added multiple times.");
-                        }
-                    }
+                    references = tweets.includes.tweets.ToDictionary(i => i.id, i=>i);
                 }
             }
 
@@ -191,7 +169,7 @@ namespace HeySearch.Services.Twitter
                 {
                     item.UserName = users[item.UserId].username;
                 } 
-                catch (KeyNotFoundException) 
+                catch(KeyNotFoundException) 
                 {
                     Console.WriteLine($"WARN: {item.UserId} does not exist in the user extension.");
                     item.UserName = "";
