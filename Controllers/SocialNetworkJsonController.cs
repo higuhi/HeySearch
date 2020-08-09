@@ -13,7 +13,7 @@ namespace HeySearch.Controllers
     /// A controller to resonpond a set of search result in JSON.
     /// </summary>
     [Produces("application/json")]
-    [Route("api")]
+    [Route("api/twitter")]
     public class SocialNetworkJsonController : Controller
     {
         private readonly ISocialNetworkSearchService _searchService;
