@@ -223,31 +223,30 @@ namespace HeySearch.Services.Twitter
                 }
 
                 //If this is a retweet, then look for the original tweet ID.
-                //There could be multiple referenced IDs. We will use the smallest ID,
+                //There could be multiple reference IDs, so we will use the smallest ID,
                 //assuming it is the original tweet. 
                 if(tweetData.referenced_tweets!=null) 
                 {
-                    item.Shared = true; // this item is shared 
-                    
+                    item.Shared = true; // this is a retweet, quoted retweet or comment
+
                     ulong min = ulong.MaxValue; // Twitter ID is unsigned 62 bits. 
                     foreach(var r in tweetData.referenced_tweets) 
                     {
                         ulong id = ulong.Parse(r.id);
                         if(id<min) 
                         {
-                            min = id;
-                            item.OriginalId =  r.id;
+                            try {
+                                //check if the tweet ID exisits in the lookup table
+                                item.OriginalUserId = references[r.id].author_id;
+                                item.OriginalId =  r.id;    
+                                min = id;
+                            } catch (KeyNotFoundException) {
+                                //looks like Tweeter API sometimes fails to get all the
+                                //referenced tweets (especially if the original tweeet is deleted). 
+                                //So, this error may occur in some cases. 
+                                Console.WriteLine($"WARN: {r.id} does not exist in the tweet extension.");
+                            }
                         }   
-                    }
-
-                    //lookup the author of the original tweet
-                    try {
-                        item.OriginalUserId = references[item.OriginalId].author_id;
-                    } 
-                    catch
-                    {
-                        Console.WriteLine($"WARN: {item.OriginalId} does not exist in the tweet extension.");
-                        item.OriginalUserId = "";
                     }
                 }
 
