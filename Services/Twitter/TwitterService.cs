@@ -198,7 +198,7 @@ namespace HeySearch.Services.Twitter
                 }
                 
                 //look up media attachement if there are any attachment
-                if(tweetData.attachments!=null) 
+                if(tweetData.attachments!=null && tweetData.attachments.media_keys!=null) 
                 {
                     foreach(var key in tweetData.attachments.media_keys) 
                     {
