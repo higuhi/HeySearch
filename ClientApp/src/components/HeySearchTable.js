@@ -54,7 +54,6 @@ const columns = [
         Header: "Date/Time",
         accessor: "created",
         Cell: ({value}) => {
-            // Using moment library, format date and time 
             const day = moment(value);
             return <span className="nowrap">{day.format('D-MMM-YY')}<br/>{day.format('HH:mm:ss')}</span>;
         }
@@ -96,7 +95,7 @@ const columns = [
         Header: "Images",
         accessor: "imageUrls",
         Cell: ({value}) => {
-            // embedded images if there are image URLs to this tweet.
+            // embedded images if there are any image URLs to this tweet.
             return (
                 <div>
                 {
@@ -137,7 +136,7 @@ const columns = [
 ];
 
 /**
- * A component to show the Search Result in a table format using react-table.
+ * React component to list the search result in a table format using react-table.
  * @param {Object} props - react props
  * @param {string} props.data - an array of data for the table
  */

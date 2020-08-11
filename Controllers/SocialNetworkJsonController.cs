@@ -18,12 +18,24 @@ namespace HeySearch.Controllers
     {
         private readonly ISocialNetworkSearchService _searchService;
         
+        /// <summary>
+        /// Constructs SocialNetworkJsonController using the given ISocialNetworkSearchService
+        /// </summary>
+        /// <param name="service">the service that this controlle should use</param> 
         public SocialNetworkJsonController(ISocialNetworkSearchService service)  
         {
             _searchService = service;
         }
 
 #nullable enable
+        /// <summary>
+        /// An action to serve HTTP GET request.
+        /// </summary>
+        /// <param name="q">search keywords</param>
+        /// <param name="io">image only option (null or empty means this option is disabled)</param>
+        /// <param name="oo">original only option (null or empty means this option is disabled)</param>
+        /// <param name="nt">next token or URL for pagination</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<SearchResult>> Get(string q, string? io, string? oo, string? nt)
         {

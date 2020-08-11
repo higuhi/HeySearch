@@ -7,7 +7,7 @@ using HeySearch.Models;
 namespace HeySearch.Services
 {
     /// <summary>
-    /// A set of interfaces to make a search in a Social Network. 
+    /// An interface to make a search in a social network such as Twitter, Facebook, etc. 
     /// </summary>
     public interface ISocialNetworkSearchService
     {
@@ -36,7 +36,7 @@ namespace HeySearch.Services
         /// See <see cref="ISocialNetworkSearchService.OPTIONS" >OPTIONS</see> for availabel options.
         /// </param>
         /// <returns>
-        /// SearchResult which contains the search results 
+        /// SearchResult which contains the search results (null if there are no results or error) 
         /// </returns>
         Task<SearchResult> Search(string searchTerm, Dictionary<OPTIONS, string> options = null);
     }

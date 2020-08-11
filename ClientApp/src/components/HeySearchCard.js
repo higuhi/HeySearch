@@ -51,6 +51,11 @@ const Styles = styled.div`
     }
 `;
 
+/**
+ * React component to list the search result in a vertical scroll. 
+ * @param {Object} props - react props
+ * @param {Object} props.data - the current search result data
+ */
 const HeySearchCard = (props) => {
     const { data } = props;
 

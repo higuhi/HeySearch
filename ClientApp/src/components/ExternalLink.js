@@ -1,9 +1,10 @@
 import React from 'react';
 
 /**
- * Makes a safe link to open a new window by specifing rel="noopener noreferrer".
- * Use the same props for anchor (a) element (e.g. href)
- * @param {*} props 
+ * React component that makes a safe link tag which opens a new window 
+ * with rel="noopener noreferrer" option. This component will use the 
+ * same props as standard anchor (A) tag (e.g. href).
+ * @param {Object} props - react props
  */
 const ExternalLink = (props) => {
     return (

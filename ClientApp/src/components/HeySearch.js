@@ -34,26 +34,27 @@ const Styles = styled.div`
 `;
 
 /**
- * A component to display load more data. 
- * This component will use the promise tracker and window scroll 
- * to change the displayed text and trigger search. 
+ * React component to handle "Load More". 
+ * This component will use the promise tracker and window scroll to change 
+ * the displayed text and to trigger search loading additional search results. 
  * @param {Object} props - react props
- * @param {string} props.nextToken - the next page token
- * @param {Object} props.nextToken - the search result data from the web api
- * @param {function} props.loadFunc - the function to load more
+ * @param {string} props.nextToken - the next page token to be used
+ * @param {Object} props.data - the current search result data
+ * @param {function} props.loadFunc - the function that triggers search 
  */
 const LoadMore = (props) => {
     const { nextToken, loadFunc, data } = props;
-    const { promiseInProgress } = usePromiseTracker(); //this will be true if it is loading data
-    const [ windowBottom, setWindowBottom ] = useState(Number.MAX_SAFE_INTEGER); //scroll position 
+    const { promiseInProgress } = usePromiseTracker(); //this will be true if search is in progress
+    const [ windowBottom, setWindowBottom ] = useState(Number.MAX_SAFE_INTEGER); //browser's scroll position 
     const [ clientHeight, setClientHeight ] = useState(0); //client window size
 
+    // A scroll handler to keep track of scroll position and cient window size
     const handleScroll = (event) => {
         setWindowBottom(document.documentElement.getBoundingClientRect().bottom);
         setClientHeight(document.documentElement.clientHeight);
     };
 
-    // set scroll listener to track the scrolling
+    // set a scroll listener to track the scrolling
     useEffect(() => {
         window.addEventListener('scroll', handleScroll, true);
         return (()=>{window.removeEventListener('scroll', handleScroll)});
@@ -61,7 +62,8 @@ const LoadMore = (props) => {
 
     // trigger load more when reaching the end 
     useEffect(() => {
-        //trigger the load func only if it is NOT loading, there is next token and scrolled to the end
+        // trigger the load func only if loading is not in progress, there is a next token 
+        // and the scroll position is at the end of browser
         if(!promiseInProgress && nextToken && (windowBottom<clientHeight+50)) {
             setWindowBottom(Number.MAX_SAFE_INTEGER); // pretend the scroll is at the top to prevent triggering multiple times.
             loadFunc();
@@ -102,14 +104,15 @@ class HeySearch extends React.Component {
     }
 
     /**
-     * Make a search request and load the response data. 
+     * Makes a search request and load the response data. 
      * @param {bool} useNext true to use next page token 
      */
     async search(useNext=false) {
 
-        this.setState({message: ""}); // clear the message.
+        // clear old message.
+        this.setState({message: ""}); 
 
-        //Construct the URL for the target end node and query 
+        //Construct the URL to request the search
         const url = this.props.url 
             + "?q=" + encodeURIComponent(this.state.searchTerm.trim()) 
             + (this.state.isImageOnly ? "&io=1" : "") 
@@ -118,7 +121,7 @@ class HeySearch extends React.Component {
 
         console.log(`EndPoint URL: ${url}`);
 
-        //Request the search result 
+        // Request the search result 
         try {
             const {data} = await trackPromise(axios.get(url));
 
@@ -138,7 +141,8 @@ class HeySearch extends React.Component {
             }
             
             this.setState({ data: newItems, nextToken: data.nextPageToken});;
-        } catch (error) {            
+        } catch (error) {     
+            // Set an apporopriate message depending on the response status
             let message = "";
             if (error.response) {
                 if(error.response.status===404) {
@@ -154,6 +158,12 @@ class HeySearch extends React.Component {
         }
     }
 
+    /**
+     * Renders HeySearch component which consists: 
+     * 1) Input form for search keywords and options
+     * 2) The search result 
+     * 3) LoadMore component 
+     */
     render() {
 
         // if there is a message to show, display it 

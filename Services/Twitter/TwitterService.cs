@@ -14,7 +14,7 @@ using HeySearch.Models;
 namespace HeySearch.Services.Twitter
 {
     /// <summary>
-    /// Implementation of ISocialNetworkSearchService for Twitter
+    /// Implementation of ISocialNetworkSearchService for Twitter API
     /// </summary>
     /// <see cref="HeySearch.Services.ISocialNetworkSearchService" />
     public class TwitterSearch : ISocialNetworkSearchService 
@@ -49,7 +49,7 @@ namespace HeySearch.Services.Twitter
         /// </summary>
         /// <param name="searchTerm">keywords to search recent tweets </param>
         /// <param name="options">a set of key-value pairs for search options</param>
-        /// <returns>SearchResult object from the serach</returns>
+        /// <returns>SearchResult object from the serach (null if there are no results or error)</returns>
         public async Task<SearchResult> Search(string searchTerm, Dictionary<ISocialNetworkSearchService.OPTIONS,string> options = null) 
         {
             const string TWITTER_API_SEARCH = "https://api.twitter.com/labs/2/tweets/search";
@@ -64,12 +64,8 @@ namespace HeySearch.Services.Twitter
             query["expansions"]   = "attachments.media_keys,author_id,referenced_tweets.id.author_id";
             query["media.fields"] = "media_key,preview_image_url,type,url";
             query["user.fields"]  = "id,name";
-            
-            buildQueryFromOptions(query, options);
-
-            builder.Query = query.ToString();
-
-            Console.WriteLine($"TwitterSearch#Search: {builder.ToString()}");
+            buildQueryFromOptions(query, options); //build query from the option.
+            builder.Query = query.ToString(); //query will be sanitized here
 
             // Build HTTP Request with authorization header
             var request = new HttpRequestMessage(

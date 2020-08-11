@@ -15,7 +15,8 @@
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+                "pattern": "\\bNow listening on:\\s+https://\\S+:(\\d+)",
+                "uriFormat": "https://localhost:%s"
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
