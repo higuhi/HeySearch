@@ -7,6 +7,7 @@ import MediaQuery from 'react-responsive';
 
 import HeySearchTable from './HeySearchTable';
 import HeySearchCard from './HeySearchCard';
+import LoaderAnimation from './LoaderAnimation';
 
 const Styles = styled.div`
     padding: 1rem;
@@ -70,8 +71,8 @@ const LoadMore = (props) => {
         }
     }, [windowBottom, promiseInProgress, clientHeight, nextToken, loadFunc])
 
-    if(promiseInProgress) {
-        return <div className="center"><span>loading...</span></div>
+    if(promiseInProgress && nextToken) {
+        return <div className="center"><LoaderAnimation /></div>;
     } else if(nextToken) {
         return <div className="center"><button className="button_more" onClick={()=>loadFunc()}>Load More</button></div>;
     } else if(data.length!==0) {
